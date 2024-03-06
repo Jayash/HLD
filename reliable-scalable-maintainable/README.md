@@ -41,7 +41,7 @@ What happens when the load increases:
 In a batch processing system such as Hadoop, we usually care about throughput, or the number of records we can process per second.
 
 > Latency and response time
-> The response time is what the client sees. Latency is the duration that a request is waiting to be handled.
+>> The response time is what the client sees. Latency is the duration that a request is waiting to be handled.
 
 ## Maintainability:
 Over time, many different people will work on the system, and they should all be able to work on it productively
