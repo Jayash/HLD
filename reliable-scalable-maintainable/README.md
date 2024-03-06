@@ -1,12 +1,49 @@
 # Reliable, Scalable and Maintainable Application
 
-non-functional requirements for any application
+---
+- Functional requirements: what the application should do
+- Nonfunctional requirements: general properties like security, reliability, compliance, scalability, compatibility and maintainability.
+---
+
+A data-intensive application is typically built from standard building blocks. They usually need to:
+
+- Store data (databases)
+
+- Speed up reads (caches)
+
+- Search data (search indexes)
+
+- Send a message to another process asynchronously (stream processing)
+
+- Periodically crunch data (batch processing)
+
+- Reliability. To work correctly even in the face of adversity.
+
+- Scalability. Reasonable ways of dealing with growth.
+
+- Maintainability. Be able to work on it productively.
 
 ## Reliability
 The system should continue to work correctly even in the face of adversity (hardware or software faults and human error)
 - Hardware faults
 - Software faults
 - Human Errors
+
+Systems that anticipate faults and can cope with them are called fault-tolerant or resilient.
+
+A fault is usually defined as one component of the system deviating from its spec, whereas failure is when the system as a whole stops providing the required service to the user.
+
+You should generally prefer tolerating faults over preventing faults.
+
+- Hardware faults. Until recently redundancy of hardware components was sufficient for most applications. As data volumes increase, more applications use a larger number of machines, proportionally increasing the rate of hardware faults. There is a move towards systems that tolerate the loss of entire machines. A system that tolerates machine failure can be patched one node at a time, without downtime of the entire system (rolling upgrade).
+- Software errors. It is unlikely that a large number of hardware components will fail at the same time. Software errors are a systematic error within the system, they tend to cause many more system failures than uncorrelated hardware faults.
+- Human errors. Humans are known to be unreliable. Configuration errors by operators are a leading cause of outages. You can make systems more reliable:
+  - Minimising the opportunities for error, peg: with admin interfaces that make easy to do the "right thing" and discourage the "wrong thing".
+  - Provide fully featured non-production sandbox environments where people can explore and experiment safely.
+  - Automated testing.
+  - Quick and easy recovery from human error, fast to rollback configuration changes, roll out new code gradually and tools to recompute data.
+  - Set up detailed and clear monitoring, such as performance metrics and error rates (telemetry).
+  - Implement good management practices and training.
 
 ## Scalability
 As the system grows there should be reasonable ways of dealing with the growth
@@ -75,6 +112,35 @@ Distributing stateless services across multiple machines is fairly straightforwa
 
 ## Maintainability:
 Over time, many different people will work on the system, and they should all be able to work on it productively
-- Operability: Make it easy for operations team to keep the system running smoothly
-- Simplicity: Managing Complexity
-- Evolvability: Making change easy
+
+The majority of the cost of software is in its ongoing maintenance. There are three design principles for software systems:
+
+- Operability. Make it easy for operation teams to keep the system running.
+- Simplicity. Easy for new engineers to understand the system by removing as much complexity as possible.
+- Evolvability. Make it easy for engineers to make changes to the system in the future.
+- Operability: making life easy for operations
+  
+A good operations team is responsible for
+
+- Monitoring and quickly restoring service if it goes into bad state
+- Tracking down the cause of problems
+- Keeping software and platforms up to date
+- Keeping tabs on how different systems affect each other
+- Anticipating future problems
+- Establishing good practices and tools for development
+- Perform complex maintenance tasks, like platform migration
+- Maintaining the security of the system
+- Defining processes that make operations predictable
+- Preserving the organisation's knowledge about the system
+
+Good operability means making routine tasks easy.
+
+**Simplicity: managing complexity**
+When complexity makes maintenance hard, budget and schedules are often overrun. There is a greater risk of introducing bugs.
+
+Making a system simpler means removing accidental complexity, as non inherent in the problem that the software solves (as seen by users).
+
+One of the best tools we have for removing accidental complexity is abstraction that hides the implementation details behind clean and simple to understand APIs and facades.
+
+**Evolvability: making change easy**
+Agile working patterns provide a framework for adapting to change.
