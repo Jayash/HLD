@@ -51,7 +51,7 @@ As the system grows there should be reasonable ways of dealing with the growth
 - Calculate Performance: how performant must be the application
 - Approaches for coping with load
 
-  ---
+---
 
 Twitter example
 Twitter main operations
