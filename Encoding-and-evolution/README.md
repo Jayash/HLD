@@ -154,3 +154,13 @@ In distributed actor frameworks, this programming model is used to scale an appl
 - Akka uses Java's built-in serialisation by default, which does not provide forward or backward compatibility. You can replace it with something like Protocol Buffers and the ability to do rolling upgrades.
 - Orleans by default uses custom data encoding format that does not support rolling upgrade deployments.
 - In Erlang OTP it is surprisingly hard to make changes to record schemas.
+
+---
+
+What happens if multiple machines are involved in storage and retrieval of data?
+
+Reasons for distribute a database across multiple machines:
+
+- Scalability
+- Fault tolerance/high availability
+- Latency, having servers at various locations worldwide
