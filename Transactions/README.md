@@ -69,7 +69,57 @@ Snapshot isolation is called serializable in Oracle, and repeatable read in Post
 ### Preventing lost updates
 This might happen if an application reads some value from the database, modifies it, and writes it back. If two transactions do this concurrently, one of the modifications can be lost (later write clobbers the earlier write).
 
-Atomic write operations
+### Atomic write operations
 A solution for this it to avoid the need to implement read-modify-write cycles and provide atomic operations such us
 
 `UPDATE counters SET value = value + 1 WHERE key = 'foo';`
+
+MongoDB provides atomic operations for making local modifications, and Redis provides atomic operations for modifying data structures.
+
+### Explicit locking
+The application explicitly lock objects that are going to be updated.
+
+### Automatically detecting lost updates
+Allow them to execute in parallel, if the transaction manager detects a lost update, abort the transaction and force it to retry its read-modify-write cycle.
+
+MySQL/InnoDB's repeatable read does not detect lost updates.
+
+### Compare-and-set
+If the current value does not match with what you previously read, the update has no effect.
+
+`UPDATE wiki_pages SET content = 'new content'
+  WHERE id = 1234 AND content = 'old content';`
+
+### Conflict resolution and replication
+With multi-leader or leaderless replication, compare-and-set do not apply.
+
+A common approach in replicated databases is to allow concurrent writes to create several conflicting versions of a value (also know as siblings), and to use application code or special data structures to resolve and merge these versions after the fact.
+
+### Write skew and phantoms
+Imagine Alice and Bob are two on-call doctors for a particular shift. Imagine both the request to leave because they are feeling unwell. Unfortunately they happen to click the button to go off call at approximately the same time.
+
+```
+ALICE                                   BOB
+
+┌─ BEGIN TRANSACTION                    ┌─ BEGIN TRANSACTION
+│                                       │
+├─ currently_on_call = (                ├─ currently_on_call = (
+│   select count(*) from doctors        │    select count(*) from doctors
+│   where on_call = true                │    where on_call = true
+│   and shift_id = 1234                 │    and shift_id = 1234
+│  )                                    │  )
+│  // now currently_on_call = 2         │  // now currently_on_call = 2
+│                                       │
+├─ if (currently_on_call  2) {          │
+│    update doctors                     │
+│    set on_call = false                │
+│    where name = 'Alice'               │
+│    and shift_id = 1234                ├─ if (currently_on_call >= 2) {
+│  }                                    │    update doctors
+│                                       │    set on_call = false
+└─ COMMIT TRANSACTION                   │    where name = 'Bob'  
+                                        │    and shift_id = 1234
+                                        │  }
+                                        │
+                                        └─ COMMIT TRANSACTION
+```
