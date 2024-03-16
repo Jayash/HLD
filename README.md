@@ -1,5 +1,7 @@
 # HLD
 
+https://github.com/keyvanakbary/learning-notes/blob/master/books/designing-data-intensive-applications.md
+
 Consider a scenario of designing book my show
 
 at start we create a monolith system with no other components
